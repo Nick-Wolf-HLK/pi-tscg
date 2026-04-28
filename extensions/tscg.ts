@@ -14,6 +14,10 @@ import type {
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
 
+// Plugin version — keep in sync with package.json on every release.
+const PLUGIN_VERSION = "0.2.0";
+const STATUS_PREFIX = `pi-tscg v${PLUGIN_VERSION}`;
+
 type Profile = "light" | "balanced" | "aggressive";
 
 interface TscgSettings {
@@ -616,11 +620,11 @@ export default function (pi: ExtensionAPI): void {
 			return;
 		}
 		if (!settings.enabled) {
-			ctx.ui.setStatus("tscg", "TSCG: off");
+			ctx.ui.setStatus("tscg", `${STATUS_PREFIX} · off`);
 			return;
 		}
 		if (stats.requestsCompressed === 0 && stats.resultsCompressed === 0) {
-			ctx.ui.setStatus("tscg", `TSCG: ready (${settings.profile})`);
+			ctx.ui.setStatus("tscg", `${STATUS_PREFIX} · ready (${settings.profile})`);
 			return;
 		}
 		const parts: string[] = [];
@@ -655,7 +659,7 @@ export default function (pi: ExtensionAPI): void {
 				: "";
 			parts.push(`cache ${stats.cachedRequests}${modeLabel}`);
 		}
-		ctx.ui.setStatus("tscg", `TSCG: ${parts.join(" · ")} (${settings.profile})`);
+		ctx.ui.setStatus("tscg", `${STATUS_PREFIX} · ${parts.join(" · ")} (${settings.profile})`);
 	}
 }
 
