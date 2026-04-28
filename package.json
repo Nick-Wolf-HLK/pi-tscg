@@ -1,0 +1,62 @@
+{
+  "name": "pi-tscg",
+  "version": "0.2.0",
+  "description": "Drop-in tool-schema and tool-result compression for the Pi coding-agent. Wraps @tscg/core, adds provider-aware prompt-cache awareness (Anthropic/OpenAI/Ollama) and lossy tool-result truncation. Provider-agnostic, deterministic, tool-call dispatch unchanged.",
+  "keywords": [
+    "pi",
+    "pi-package",
+    "tscg",
+    "tool-compression",
+    "tool-schema",
+    "tool-results",
+    "token-savings",
+    "prompt-caching",
+    "llm",
+    "coding-agent",
+    "anthropic",
+    "openai",
+    "ollama",
+    "mcp"
+  ],
+  "license": "MIT",
+  "author": "Dominic Wolf <wolf.dominic89@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dominicwolf/pi-tscg.git"
+  },
+  "homepage": "https://github.com/dominicwolf/pi-tscg#readme",
+  "bugs": {
+    "url": "https://github.com/dominicwolf/pi-tscg/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "extensions",
+    "docs",
+    "LICENSE",
+    "NOTICES.md",
+    "README.md"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ]
+  },
+  "dependencies": {
+    "@tscg/core": "^1.4.3"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": ">=0.70.0",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@mariozechner/pi-coding-agent": "^0.70.5",
+    "@types/node": "^22.0.0",
+    "typebox": "^1.1.24",
+    "typescript": "5.5"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

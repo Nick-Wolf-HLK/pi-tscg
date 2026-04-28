@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pi-tscg · Integration Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #131826;
+    --bg-card-hover: #1a2033;
+    --border: #1f2940;
+    --text: #e6e9f2;
+    --text-dim: #8b95b3;
+    --text-faint: #5a6383;
+    --accent: #22d3ee;
+    --accent-soft: #22d3ee20;
+    --green: #4ade80;
+    --green-soft: #4ade8020;
+    --amber: #fbbf24;
+    --amber-soft: #fbbf2420;
+    --pink: #f472b6;
+    --pink-soft: #f472b620;
+    --code-bg: #0d1220;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px; line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background: radial-gradient(ellipse at top, #0e1426 0%, var(--bg) 50%);
+    min-height: 100vh;
+  }
+  .container { max-width: 1140px; margin: 0 auto; padding: 60px 32px; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 60px 0 80px; border-bottom: 1px solid var(--border); }
+  .hero .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px;
+    background: var(--bg-card); font-size: 13px; color: var(--text-dim); margin-bottom: 32px;
+  }
+  .hero .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .hero h1 { font-size: 56px; font-weight: 800; margin: 0 0 16px; letter-spacing: -0.02em; line-height: 1.1; background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero h1 .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .hero .tagline { font-size: 19px; color: var(--text-dim); max-width: 720px; margin: 0 auto 36px; }
+  .hero .footer-mock { display: inline-block; padding: 14px 22px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; color: var(--accent); }
+
+  /* SECTION */
+  section { margin: 80px 0; }
+  .section-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+  h2 { font-size: 32px; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.01em; }
+  h3 { font-size: 18px; font-weight: 600; margin: 0 0 10px; color: var(--text); }
+  .section-intro { color: var(--text-dim); max-width: 760px; margin-bottom: 40px; font-size: 16px; }
+
+  /* GRIDS */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  @media (max-width: 800px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; transition: all 0.2s ease;
+  }
+  .card:hover { border-color: var(--text-faint); background: var(--bg-card-hover); }
+  .card .icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .card .label { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; }
+  .card .lever-num { font-family: ui-monospace, monospace; color: var(--text-faint); font-size: 14px; margin-bottom: 6px; }
+  .card p { color: var(--text-dim); font-size: 14px; line-height: 1.65; margin: 0 0 14px; }
+  .card .stat { font-family: ui-monospace, monospace; font-size: 28px; font-weight: 700; }
+
+  /* HEBEL CARD VARIANTS */
+  .lever-1 .icon { background: var(--accent-soft); color: var(--accent); }
+  .lever-1 .label { background: var(--accent-soft); color: var(--accent); }
+  .lever-1 .stat { color: var(--accent); }
+  .lever-2 .icon { background: var(--green-soft); color: var(--green); }
+  .lever-2 .label { background: var(--green-soft); color: var(--green); }
+  .lever-2 .stat { color: var(--green); }
+  .lever-3 .icon { background: var(--pink-soft); color: var(--pink); }
+  .lever-3 .label { background: var(--pink-soft); color: var(--pink); }
+  .lever-3 .stat { color: var(--pink); }
+
+  /* STAT BLOCK */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 800px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat-block { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: left; }
+  .stat-block .num { font-family: ui-monospace, monospace; font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .stat-block .num.accent { color: var(--accent); }
+  .stat-block .num.green { color: var(--green); }
+  .stat-block .num.amber { color: var(--amber); }
+  .stat-block .lbl { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
+  .stat-block .sub { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); font-weight: 600; }
+  td { color: var(--text-dim); }
+  td.strong { color: var(--text); font-weight: 500; }
+  td .mono { font-family: ui-monospace, monospace; font-size: 13px; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; }
+  .badge.live { background: var(--green-soft); color: var(--green); }
+  .badge.implicit { background: var(--accent-soft); color: var(--accent); }
+  .badge.skeleton { background: var(--amber-soft); color: var(--amber); }
+  .badge.noop { background: #2a2f4222; color: var(--text-faint); }
+
+  /* CODE */
+  pre, code { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  code.inline { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: var(--accent); border: 1px solid var(--border); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; overflow-x: auto; font-size: 13px; line-height: 1.55; color: var(--text); margin: 0; }
+  pre .c { color: var(--text-faint); }
+  pre .k { color: var(--pink); }
+  pre .s { color: var(--green); }
+  pre .n { color: var(--accent); }
+
+  /* ARCH */
+  .arch-diagram { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.5; color: var(--text-dim); white-space: pre; overflow-x: auto; }
+  .arch-diagram .h { color: var(--text); font-weight: 600; }
+  .arch-diagram .a { color: var(--accent); }
+  .arch-diagram .g { color: var(--green); }
+  .arch-diagram .p { color: var(--pink); }
+
+  /* PROVIDER MATRIX */
+  .matrix { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 800px) { .matrix { grid-template-columns: repeat(2, 1fr); } }
+  .provider { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+  .provider .name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .provider .api { font-size: 12px; color: var(--text-faint); margin-bottom: 14px; }
+  .provider .mech { font-size: 13px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.5; }
+
+  /* ROADMAP */
+  .roadmap-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+  .roadmap-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .roadmap-item .dot.done { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .roadmap-item .dot.skel { background: var(--amber); }
+  .roadmap-item .dot.open { background: var(--text-faint); }
+  .roadmap-item .body { flex-grow: 1; }
+  .roadmap-item .title { font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .roadmap-item .desc { font-size: 13px; color: var(--text-dim); }
+  .roadmap-item .status { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+  .status.done { background: var(--green-soft); color: var(--green); }
+  .status.skel { background: var(--amber-soft); color: var(--amber); }
+  .status.open { background: #2a2f4222; color: var(--text-faint); }
+
+  /* CTA / FOOTER */
+  .cta-card { background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-hover) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 40px; text-align: center; }
+  .cta-card h2 { margin-bottom: 12px; }
+  .cta-card p { color: var(--text-dim); max-width: 600px; margin: 0 auto 24px; }
+  .cta-card pre { display: inline-block; text-align: left; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); margin-top: 80px; color: var(--text-faint); font-size: 13px; text-align: center; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="logo"><span class="logo-dot"></span> pi-tscg · v0.2.0</div>
+    <h1><span class="mono">pi-tscg</span></h1>
+    <p class="tagline">Drop-in tool-schema and tool-result compression for the <strong style="color:var(--text)">Pi coding-agent</strong>. Wraps <code class="inline">@tscg/core</code>, adds provider-aware prompt-cache awareness and lossy tool-result truncation. Provider-agnostisch, deterministisch, kein Eingriff in Tool-Call-Dispatch.</p>
+    <div class="footer-mock">TSCG: last −8.3% · session −8.3% · res −62% · saved 14.6k (aggressive)</div>
+  </header>
+
+  <!-- LIVE-METRIK -->
+  <section>
+    <div class="section-label">Real Session · qwen3.5:9b · Ollama</div>
+    <h2>Was eine Live-Session liefert</h2>
+    <p class="section-intro">Gemessen am 28. April 2026 mit Pi v0.70.5 auf einem lokalen 9B-Modell. Aufgabenmix: HTML-Datei generieren, Datei-Inventar mit `find` (11 356 Dateien), Markdown-Bericht erstellen.</p>
+    <div class="stats-row">
+      <div class="stat-block">
+        <div class="num accent">14.6k</div>
+        <div class="lbl">Tokens gespart</div>
+        <div class="sub">≈ 10 500 Wörter</div>
+      </div>
+      <div class="stat-block">
+        <div class="num green">62%</div>
+        <div class="lbl">Tool-Result Compression</div>
+        <div class="sub">Hebel 2 — dominanter Hebel</div>
+      </div>
+      <div class="stat-block">
+        <div class="num amber">8.3%</div>
+        <div class="lbl">Schema Compression</div>
+        <div class="sub">Hebel 1 — strukturell auf Pi-Built-ins</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">503k</div>
+        <div class="lbl">Total Input Tokens</div>
+        <div class="sub">↓15k Output · 8.9% / 262k Context</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DREI HEBEL -->
+  <section>
+    <div class="section-label">Architektur</div>
+    <h2>Drei Hebel, drei Hooks</h2>
+    <p class="section-intro">Pi exponiert die volle Agent-Lifecycle als Event-Hooks. Diese Extension hängt sich an drei davon — zwei provider-agnostisch, einer provider-aware.</p>
+    <div class="grid-3">
+
+      <div class="card lever-1">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <div class="lever-num">Hebel 1</div>
+        <h3>Tool-Schema-Compression</h3>
+        <p>Hängt sich an <code class="inline">before_provider_request</code> und schickt jedes Tool-Schema durch <code class="inline">compressDescriptions()</code> mit allen acht TSCG-Operatoren (SDM, DRO, CAS, CCP, CFL, CFO, SAD, TAS). Tool-Namen bleiben byte-identisch, Dispatch ist unverändert.</p>
+        <p style="font-size:12px;color:var(--text-faint);margin:0">Plus: Strategy A — JSON-Pruning entfernt non-semantic Validator-Metadaten. <code class="inline" style="font-size:11px">$ref</code> und <code class="inline" style="font-size:11px">additionalProperties</code> bewusst behalten (semantisch).</p>
+        <div class="stat" style="margin-top:14px">8 - 50%</div>
+        <div style="font-size:12px;color:var(--text-faint);margin-top:4px">je nach Tool-Catalog (Pi-Built-ins → MCP-Tools)</div>
+      </div>
+
+      <div class="card lever-2">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="lever-num">Hebel 2</div>
+        <h3>Tool-Result-Compression</h3>
+        <p>Hängt sich an <code class="inline">tool_result</code> und kürzt Tool-Output, bevor er ans Modell zurück geht. Per-Tool-Pipeline: Whitespace-Collapse → Duplicate-Line-Folding → SDM-Filler-Removal → head/tail-Truncation. Edits bleiben byte-exakt unangetastet.</p>
+        <p style="font-size:12px;color:var(--text-faint);margin:0">Token-Budget per Default 4 000. Truncation explizit markiert: <code class="inline" style="font-size:11px">[TSCG: N lines / ~Xk tokens omitted — head + tail preserved]</code></p>
+        <div class="stat" style="margin-top:14px">40 - 70%</div>
+        <div style="font-size:12px;color:var(--text-faint);margin-top:4px">dominant bei großen bash/find/read Outputs</div>
+      </div>
+
+      <div class="card lever-3">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></div>
+        <div class="lever-num">Hebel 3</div>
+        <h3>Provider-Cache-Awareness</h3>
+        <p>Erkennt den Provider aus dem Tool-Format und engaged dessen Cache-Mechanik. <strong style="color:var(--text)">Anthropic</strong>: setzt <code class="inline">cache_control: ephemeral</code>. <strong style="color:var(--text)">OpenAI</strong>: implizit aktiv, weil unsere deterministische Compression das Auto-Prefix-Caching triggert. <strong style="color:var(--text)">Ollama</strong>: no-op. <strong style="color:var(--text)">Gemini</strong>: Skeleton-Hook PR-ready.</p>
+        <div class="stat" style="margin-top:14px">~10x</div>
+        <div style="font-size:12px;color:var(--text-faint);margin-top:4px">Anthropic-Tools werden ab Call 2 zu ~10% des Preises abgerechnet</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROVIDER-MATRIX -->
+  <section>
+    <div class="section-label">Hebel 3 · Provider-Awareness</div>
+    <h2>Pro Provider eine eigene Cache-Mechanik</h2>
+    <p class="section-intro">Cache-Mechanismen sind technisch grundverschieden. Hebel 3 ist deshalb ein Switch über den erkannten Provider — kein One-Size-Fits-All.</p>
+    <div class="matrix">
+      <div class="provider">
+        <div class="name">Anthropic</div>
+        <div class="api">Claude API</div>
+        <div class="mech">Setzt <code class="inline" style="font-size:11px">cache_control: ephemeral</code> auf das letzte Tool im Block. Anthropic cached den ganzen Tools-Array. Ab Call 2: ~10% Kosten.</div>
+        <span class="badge live">Live ✓</span>
+      </div>
+      <div class="provider">
+        <div class="name">OpenAI</div>
+        <div class="api">GPT API · ≥1024 Tokens</div>
+        <div class="mech">OpenAI cached automatisch identische Prefixes. Wir setzen keinen Marker, profitieren aber von TSCG's Determinismus → Cache-Hit ab Call 2.</div>
+        <span class="badge implicit">Implizit ✓</span>
+      </div>
+      <div class="provider">
+        <div class="name">Ollama</div>
+        <div class="api">localhost:11434</div>
+        <div class="mech">Lokales Modell, kein Token-Pricing, kein API-Cache. Korrekter no-op — Hebel 1 + 2 reichen, weil Compression hier Inferenzzeit spart, nicht Kosten.</div>
+        <span class="badge noop">No-op</span>
+      </div>
+      <div class="provider">
+        <div class="name">Google</div>
+        <div class="api">Gemini API</div>
+        <div class="mech">Eigener <code class="inline" style="font-size:11px">cachedContents</code>-Endpoint. Skeleton-Hook im Code mit klar markierter <code class="inline" style="font-size:11px">TODO(gemini)</code>-Stelle, an der ein PR andocken kann.</div>
+        <span class="badge skeleton">Skeleton</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WARUM PI -->
+  <section>
+    <div class="section-label">Plattform-Wahl</div>
+    <h2>Warum der Pi-Agent — und nicht Claude Code, Aider, Cursor</h2>
+    <p class="section-intro">Pi gibt einer Compression-Extension genau die Eingriffspunkte und die Provider-Breite, die wir brauchen. Ohne Lock-in, ohne Cloud-Backend, mit Self-Provisioning.</p>
+    <table>
+      <thead>
+        <tr><th>Eigenschaft</th><th>pi</th><th>Claude Code</th><th>Aider</th><th>Cursor / Copilot</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="strong">Lizenz</td><td>MIT, Open Source</td><td>proprietär</td><td>Apache-2.0</td><td>proprietär</td></tr>
+        <tr><td class="strong">Provider-Support</td><td>Anthropic, OpenAI, Ollama …</td><td>Anthropic only</td><td>Multi-Provider</td><td>nur über Vendor-Backend</td></tr>
+        <tr><td class="strong">Lokale Modelle First-Class</td><td>ja (Ollama default)</td><td>nein</td><td>teilweise</td><td>nein</td></tr>
+        <tr><td class="strong">Hooks für Schema-Mutation</td><td>vollständig</td><td>nur Pre-/Post-Tool</td><td>begrenzt</td><td>—</td></tr>
+        <tr><td class="strong">Hooks für Tool-Result-Mutation</td><td>vollständig</td><td>nein</td><td>nein</td><td>—</td></tr>
+        <tr><td class="strong">Self-Provisioning (Plugin-Install)</td><td><code class="inline" style="font-size:12px">pi install &lt;pkg&gt;</code></td><td>Plugin-Verzeichnis</td><td>nein</td><td>proprietär</td></tr>
+        <tr><td class="strong">CLI / headless-fähig</td><td>ja (<code class="inline" style="font-size:12px">pi -p</code>)</td><td>ja</td><td>ja</td><td>nur in IDE</td></tr>
+        <tr><td class="strong">Telemetrie</td><td>keine</td><td>proprietär</td><td>optional</td><td>proprietär</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ARCHITEKTUR -->
+  <section>
+    <div class="section-label">Integration</div>
+    <h2>Wo @tscg/core in Pi sitzt</h2>
+    <p class="section-intro">Drei Hooks, eine Source-Datei (<code class="inline">extensions/tscg.ts</code>), eine Core-Dependency. Disable per <code class="inline">/tscg off</code> stellt Original-Pi-Verhalten wieder her.</p>
+    <div class="arch-diagram"><span class="h">┌─────────────────────────────────────────────────┐
+│           Pi Coding Agent (v0.70.5)             │
+│                                                 │
+│   User Prompt ──► Agent Loop ──► Provider ──► <span class="a">LLM</span>  │
+│       │  ▲                  │                   │
+│       │  │                  │                   │
+│  ┌────┴──┴──────────────────┴─────┐             │
+│  │   Extension Hook-Bus            │             │
+│  └─────────────────────────────────┘             │
+│       │  │                  │                   │
+│       ▼  │                  ▼                   │
+│  ┌────────┴───────┐    ┌──────────────────┐     │
+│  │  pi-tscg       │    │  pi-tscg         │     │
+│  │  Hook-Block A  │    │  Hook-Block B    │     │
+│  │                │    │                  │     │
+│  │  <span class="a">Hebel 1+3</span>     │    │  <span class="g">Hebel 2</span>         │     │
+│  └───┬────────────┘    └──────────────────┘     │
+│      │                                          │
+└──────┼──────────────────────────────────────────┘
+       │
+       ▼
+  ┌─────────────┐
+  │ <span class="p">@tscg/core</span>  │  ← compressDescriptions(...)
+  │   v1.4.3    │     applySDMToText(...)
+  └─────────────┘     estimateTokens(...)</span></div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section>
+    <div class="section-label">Roadmap</div>
+    <h2>Was erledigt ist, was kommt</h2>
+    <p class="section-intro">Was im aktuellen <code class="inline">pi-tscg@0.2.0</code> Release drin ist, was als Next-Step PR-ready im Code wartet, was offen ist.</p>
+    <div class="roadmap-item">
+      <div class="dot done"></div>
+      <div class="body">
+        <div class="title">Hebel 1 · Tool-Schema-Compression mit allen 8 TSCG-Operatoren</div>
+        <div class="desc">compressDescriptions mit profile: aggressive und allen principles aktiv</div>
+      </div>
+      <span class="status done">Live</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot done"></div>
+      <div class="body">
+        <div class="title">Hebel 2 · Tool-Result-Compression</div>
+        <div class="desc">tool_result Hook mit per-Tool-Pipeline · 62 % Reduktion auf großen Outputs</div>
+      </div>
+      <span class="status done">Live</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot done"></div>
+      <div class="body">
+        <div class="title">Hebel 3 · Anthropic + OpenAI Cache-Awareness</div>
+        <div class="desc">cache_control für Anthropic, Determinismus für OpenAI Auto-Cache · Live verifiziert</div>
+      </div>
+      <span class="status done">Live</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot done"></div>
+      <div class="body">
+        <div class="title">Strategie A · JSON-Schema-Overhead-Pruning</div>
+        <div class="desc">$schema/$id/$comment + leere examples/enum gestrippt · $ref behalten (load-bearing)</div>
+      </div>
+      <span class="status done">Implementiert</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot skel"></div>
+      <div class="body">
+        <div class="title">Hebel 3 · Gemini cachedContents API</div>
+        <div class="desc">Code-Skeleton bereit, klare TODO(gemini) Stelle · benötigt google-genai SDK Integration</div>
+      </div>
+      <span class="status skel">Skeleton · PR-ready</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot open"></div>
+      <div class="body">
+        <div class="title">Strategie C · Full-TSCG mit Reverse-Map</div>
+        <div class="desc">Symbol-Aliasing + Rückübersetzung im tool_call Hook · würde Hebel 1 auf 50–65 % heben</div>
+      </div>
+      <span class="status open">Offen</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot open"></div>
+      <div class="body">
+        <div class="title">Live Cache-Hit-Telemetrie</div>
+        <div class="desc">after_provider_response parsen für Anthropic-usage und OpenAI cached_tokens</div>
+      </div>
+      <span class="status open">Offen</span>
+    </div>
+    <div class="roadmap-item">
+      <div class="dot open"></div>
+      <div class="body">
+        <div class="title">MCP-Auto-Erkennung</div>
+        <div class="desc">Bei MCP-Tools automatisch aggressives Profil, bei Pi-Built-ins light</div>
+      </div>
+      <span class="status open">Offen</span>
+    </div>
+  </section>
+
+  <!-- VORSCHLÄGE -->
+  <section>
+    <div class="section-label">Vorschläge an @tscg/core</div>
+    <h2>Was die Praxis-Integration für TSCG hergibt</h2>
+    <p class="section-intro">Drei konkrete Anregungen aus dem Pi-Lauf, die anderen Adapter-Autoren auch helfen würden.</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color:var(--accent)">compressFreeText API</h3>
+        <p>Tool-Output-Compression als first-class Use-Case neben Tool-Schema-Compression. Würde Hebel 2 in jeder Pi/Aider/Continue-Integration trivial machen.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">mapPiModelId als Adapter</h3>
+        <p>Die Mapping-Map von Pi-Modell-IDs zu deinen <code class="inline">ModelTarget</code>-Werten könnte ich als PR ins examples/ einbringen — Referenz für andere Adapter-Autoren.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">outputFormat Doku</h3>
+        <p>Was <code class="inline">outputFormat: "compact"</code> im description-only Mode konkret tut, ist nicht klar. Ein Beispiel-Snippet im README würde Adopters helfen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section>
+    <div class="cta-card">
+      <div class="section-label">Distribution</div>
+      <h2>Drop-in via npm</h2>
+      <p>Sobald veröffentlicht: ein Befehl reicht, um alle drei Hebel live in jeder Pi-Session zu aktivieren — keine Code-Änderung am Agent, kein Cluster-Setup, kein Account.</p>
+      <pre><span class="k">$</span> pi install pi-tscg
+<span class="c">→ resolves @tscg/core, registers extension, ready in footer</span></pre>
+      <p style="margin-top:24px;font-size:13px;color:var(--text-faint)">
+        npm-Paket: <code class="inline">pi-tscg-0.2.0.tgz</code> · 27.3 KB packed · 7 Dateien · type-checked · code-reviewed (3 Blocker gefixt vor Release)
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Compression-Engine: <a href="https://github.com/SKZL-AI/tscg">@tscg/core</a> by Furkan Sakizli (SKZL-AI) · MIT<br>
+      Pi-Coding-Agent: <a href="https://github.com/badlogic/pi-mono">@mariozechner/pi-coding-agent</a> by Mario Zechner · MIT<br>
+      Pi-TSCG-Integration: Dominic Wolf · MIT · 28. April 2026
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
