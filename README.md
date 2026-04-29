@@ -1,9 +1,16 @@
 # pi-tscg
 
-Drop-in tool-schema and tool-result compression for [Pi](https://pi.dev), the
-lean coding-agent CLI. Wraps [`@tscg/core`](https://github.com/SKZL-AI/tscg)
-and adds two extra layers Pi alone doesn't have, so every LLM request and
-every tool-result is shorter — without breaking tool-calling.
+> **Built on [TSCG](https://github.com/SKZL-AI/tscg) — the deterministic
+> tool-schema compression engine by [Furkan Sakizli](https://github.com/SKZL-AI)
+> (SKZL-AI).** This package brings TSCG into the [Pi coding-agent](https://pi.dev)
+> as a drop-in plugin and adds two extra compression layers on top
+> (tool-result compression and provider-aware prompt-caching). Furkan's engine
+> does the actual schema compression; this plugin is the integration glue
+> plus the additional layers Pi alone doesn't have.
+
+Drop-in tool-schema and tool-result compression for Pi, the lean coding-agent
+CLI. Wraps [`@tscg/core`](https://github.com/SKZL-AI/tscg) so every LLM request
+and every tool-result is shorter — without breaking tool-calling.
 
 ```
 TSCG: last −8.3% · session −8.3% · res −62% · saved 14.6k (aggressive)
@@ -205,16 +212,38 @@ The `pi-package` keyword makes it discoverable on
 
 ## Credits
 
-The compression engine is [TSCG](https://github.com/SKZL-AI/tscg) by
-Furkan Sakizli (SKZL-AI). This package is the Pi integration around it —
-the core compression logic, all eight TSCG operators, and the deterministic
-pipeline are theirs. See [`NOTICES.md`](./NOTICES.md) for license details.
+### The engine — TSCG by Furkan Sakizli
 
-The Pi-specific contributions in this package are:
+The compression engine at the heart of this plugin is
+**[TSCG (Tool Schema Compression and Generation)](https://github.com/SKZL-AI/tscg)
+by Furkan Sakizli (SKZL-AI)**.
+
+> All compression logic, the eight TSCG operators (SDM, DRO, CFL, CFO, CCP, CAS,
+> SAD-F, TAS), the tokenizer profiles, and the deterministic pipeline are his
+> work. Without TSCG this plugin would be impossible.
+
+If you're using this plugin, please also star [@tscg/core on
+GitHub](https://github.com/SKZL-AI/tscg) and give Furkan the recognition he
+deserves. See [`NOTICES.md`](./NOTICES.md) for license details and
+attribution.
+
+### The plugin — pi-tscg by Nick Wolf
+
+This package is the Pi-specific integration around TSCG. Contributions added
+on top of TSCG:
+
 - the lifecycle integration (Pi extension hooks),
-- Lever 2 (tool-result compression — uses `applySDMToText` from core but the
-  per-tool strategy and head/tail-truncation logic are added on top),
-- Lever 3 (provider detection + per-provider cache strategy).
+- Lever 2 (tool-result compression — uses `applySDMToText` from TSCG core but
+  the per-tool strategy and head/tail-truncation logic are added on top),
+- Lever 3 (provider detection + per-provider cache strategy for
+  Anthropic, OpenAI, Ollama; Gemini skeleton),
+- Strategy A (JSON-Schema overhead pruning).
+
+### The host — Pi-Coding-Agent by Mario Zechner
+
+Built to plug into [`@mariozechner/pi-coding-agent`](https://github.com/badlogic/pi-mono)
+by Mario Zechner. The plugin only works because Pi exposes a clean lifecycle
+hook API that lets extensions mutate provider payloads and tool results.
 
 ## License
 

@@ -1,7 +1,7 @@
 {
   "name": "pi-tscg",
-  "version": "0.2.2",
-  "description": "Drop-in tool-schema and tool-result compression for the Pi coding-agent. Wraps @tscg/core, adds provider-aware prompt-cache awareness (Anthropic/OpenAI/Ollama) and lossy tool-result truncation. Provider-agnostic, deterministic, tool-call dispatch unchanged.",
+  "version": "0.2.3",
+  "description": "Drop-in tool-schema and tool-result compression for the Pi coding-agent. Built on TSCG by Furkan Sakizli (SKZL-AI) — wraps @tscg/core and adds tool-result compression plus provider-aware prompt-cache awareness (Anthropic/OpenAI/Ollama). Provider-agnostic, deterministic, tool-call dispatch unchanged.",
   "keywords": [
     "pi",
     "pi-package",

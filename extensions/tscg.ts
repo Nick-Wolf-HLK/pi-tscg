@@ -15,7 +15,7 @@ import type {
 } from "@mariozechner/pi-coding-agent";
 
 // Plugin version — keep in sync with package.json on every release.
-const PLUGIN_VERSION = "0.2.2";
+const PLUGIN_VERSION = "0.2.3";
 const STATUS_PREFIX = `pi-tscg v${PLUGIN_VERSION}`;
 
 type Profile = "light" | "balanced" | "aggressive";
